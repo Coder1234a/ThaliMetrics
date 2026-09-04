@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ThaliMetrics — NutriHack</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header class="app-header">
+  <div class="brand">
+    <span class="brand-mark">🍽️</span>
+    <div>
+      <h1>ThaliMetrics</h1>
+      <p class="subtitle">One tap at the tray return. Two problems solved.</p>
+    </div>
+  </div>
+  <nav class="tabs">
+    <button class="tab-btn active" data-tab="log">Log My Meal</button>
+    <button class="tab-btn" data-tab="dashboard">Mess Dashboard</button>
+    <button class="tab-btn" data-tab="digest">Weekly Digest</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ===================== STUDENT: LOG MEAL ===================== -->
+  <section id="tab-log" class="tab-panel active">
+    <h2>What did you take, and what's left?</h2>
+    <p class="hint">Bowls: slide to show how much you took, then how much you're leaving. Roti: tap the quarters you took, then the quarters you wasted.</p>
+
+    <div id="dish-list" class="dish-list"><!-- filled by app.js --></div>
+
+    <button id="log-meal-btn" class="primary-btn">Log this meal</button>
+    <p id="log-confirm" class="confirm-msg"></p>
+  </section>
+
+  <!-- ===================== MESS: DASHBOARD ===================== -->
+  <section id="tab-dashboard" class="tab-panel">
+    <h2>Waste by dish</h2>
+    <p class="hint">Built from every logged meal. Highest-waste dishes are flagged with a swap suggestion, in line with FSSAI Eat Right Campus criteria.</p>
+    <div id="dashboard-chart" class="dashboard-chart"><!-- filled by app.js --></div>
+    <div id="swap-suggestions" class="swap-box"><!-- filled by app.js --></div>
+  </section>
+
+  <!-- ===================== STUDENT: WEEKLY DIGEST ===================== -->
+  <section id="tab-digest" class="tab-panel">
+    <h2>Your week, in nutrients</h2>
+    <p class="hint">A once-a-week summary, not a daily nag. Based on ICMR-NIN reference intakes.</p>
+
+    <div class="profile-row">
+      <label>Body weight (kg): <input id="weight-input" type="number" value="60" min="30" max="150" /></label>
+    </div>
+
+    <div id="digest-summary" class="digest-summary"><!-- filled by app.js --></div>
+  </section>
+
+</main>
+
+<footer class="app-footer">
+  Built for NutriHack · Nutrition Week 2026 · VIT Vellore
+</footer>
+
+<script src="data/mockData.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

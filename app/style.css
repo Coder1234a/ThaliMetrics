@@ -1,0 +1,153 @@
+:root {
+  --green: #1f7a4c;
+  --green-dark: #12492f;
+  --green-bg: #f2f8f4;
+  --border: #dfe8e2;
+  --text: #232323;
+  --muted: #6b6b6b;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  color: var(--text);
+  background: #fafcfb;
+}
+
+/* ---------- Header ---------- */
+.app-header {
+  background: var(--green-dark);
+  color: white;
+  padding: 18px 24px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.brand-mark { font-size: 28px; }
+
+.brand h1 { margin: 0; font-size: 22px; }
+.subtitle { margin: 2px 0 0 0; font-size: 13px; opacity: 0.85; }
+
+.tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.tab-btn {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.4);
+  color: white;
+  padding: 8px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 13.5px;
+}
+
+.tab-btn.active {
+  background: white;
+  color: var(--green-dark);
+  font-weight: 600;
+  border-color: white;
+}
+
+/* ---------- Layout ---------- */
+main { max-width: 720px; margin: 0 auto; padding: 24px 18px 60px 18px; }
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+h2 { color: var(--green-dark); margin-top: 0; }
+.hint { color: var(--muted); font-size: 13.5px; margin-top: -4px; }
+
+/* ---------- Dish cards (Log Meal tab) ---------- */
+.dish-list { display: flex; flex-direction: column; gap: 14px; margin: 18px 0; }
+
+.dish-card {
+  border: 1px solid var(--border);
+  background: white;
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+
+.dish-card h3 { margin: 0 0 10px 0; font-size: 15px; color: var(--text); }
+
+.slider-row { margin-bottom: 8px; }
+.slider-row label { font-size: 12.5px; color: var(--muted); display: block; margin-bottom: 2px; }
+.slider-row input[type=range] { width: 100%; accent-color: var(--green); }
+
+.quarter-row { display: flex; gap: 6px; margin-bottom: 6px; }
+.quarter-row span.qlabel { font-size: 12.5px; color: var(--muted); width: 100%; }
+
+.quarter-btn {
+  flex: 1;
+  height: 36px;
+  border: 1px solid var(--border);
+  background: #f5f5f5;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.quarter-btn.filled-taken { background: var(--green); border-color: var(--green); color: white; }
+.quarter-btn.filled-wasted { background: #c0392b; border-color: #c0392b; color: white; }
+
+.primary-btn {
+  background: var(--green);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14.5px;
+  cursor: pointer;
+}
+.primary-btn:hover { background: var(--green-dark); }
+
+.confirm-msg { color: var(--green-dark); font-size: 13.5px; margin-top: 10px; min-height: 18px; }
+
+/* ---------- Mess Dashboard ---------- */
+.dashboard-chart { display: flex; flex-direction: column; gap: 10px; margin: 18px 0; }
+
+.bar-row { display: flex; align-items: center; gap: 10px; }
+.bar-label { width: 90px; font-size: 13px; }
+.bar-track { flex: 1; background: var(--green-bg); border-radius: 6px; height: 18px; overflow: hidden; }
+.bar-fill { background: #c0392b; height: 100%; border-radius: 6px 0 0 6px; }
+.bar-pct { width: 46px; font-size: 12.5px; text-align: right; color: var(--muted); }
+
+.swap-box {
+  background: var(--green-bg);
+  border-left: 4px solid var(--green);
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 13.5px;
+  margin-top: 10px;
+}
+.swap-box p { margin: 4px 0; }
+
+/* ---------- Weekly Digest ---------- */
+.profile-row { margin: 12px 0 18px 0; font-size: 13.5px; }
+.profile-row input { padding: 4px 8px; width: 70px; margin-left: 6px; }
+
+.digest-summary { display: flex; flex-direction: column; gap: 12px; }
+
+.nutrient-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 16px;
+  background: white;
+}
+.nutrient-card h4 { margin: 0 0 6px 0; font-size: 14px; }
+.progress-track { background: var(--green-bg); border-radius: 6px; height: 14px; overflow: hidden; }
+.progress-fill { background: var(--green); height: 100%; }
+.progress-fill.low { background: #c0392b; }
+.nutrient-note { font-size: 12.5px; color: var(--muted); margin-top: 6px; }
+
+.app-footer {
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted);
+  padding: 20px 0;
+}
