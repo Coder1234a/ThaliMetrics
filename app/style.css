@@ -5,6 +5,7 @@
   --border: #dfe8e2;
   --text: #232323;
   --muted: #6b6b6b;
+  --waste-red: #c0392b;
 }
 
 * { box-sizing: border-box; }
@@ -17,137 +18,156 @@ body {
 }
 
 /* ---------- Header ---------- */
-.app-header {
-  background: var(--green-dark);
-  color: white;
-  padding: 18px 24px;
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 14px;
-}
-
+.app-header { background: var(--green-dark); color: white; padding: 18px 24px; }
+.brand { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
 .brand-mark { font-size: 28px; }
-
 .brand h1 { margin: 0; font-size: 22px; }
 .subtitle { margin: 2px 0 0 0; font-size: 13px; opacity: 0.85; }
-
 .tabs { display: flex; gap: 8px; flex-wrap: wrap; }
-
-.tab-btn {
-  background: transparent;
-  border: 1px solid rgba(255,255,255,0.4);
-  color: white;
-  padding: 8px 14px;
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 13.5px;
-}
-
-.tab-btn.active {
-  background: white;
-  color: var(--green-dark);
-  font-weight: 600;
-  border-color: white;
-}
+.tab-btn { background: transparent; border: 1px solid rgba(255,255,255,0.4); color: white; padding: 8px 14px; border-radius: 20px; cursor: pointer; font-size: 13.5px; }
+.tab-btn.active { background: white; color: var(--green-dark); font-weight: 600; border-color: white; }
 
 /* ---------- Layout ---------- */
-main { max-width: 720px; margin: 0 auto; padding: 24px 18px 60px 18px; }
-
+main { max-width: 760px; margin: 0 auto; padding: 24px 18px 60px 18px; }
 .tab-panel { display: none; }
 .tab-panel.active { display: block; }
-
 h2 { color: var(--green-dark); margin-top: 0; }
+h3 { color: var(--green-dark); font-size: 15px; }
 .hint { color: var(--muted); font-size: 13.5px; margin-top: -4px; }
+
+/* ---------- Meal setup / session toggle ---------- */
+.meal-setup-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; margin-bottom: 14px; }
+.meal-setup-row select { padding: 6px 8px; border-radius: 6px; border: 1px solid var(--border); }
+
+.session-toggle { display: flex; gap: 6px; }
+.session-btn {
+  background: white; border: 1px solid var(--border); padding: 8px 12px;
+  border-radius: 20px; cursor: pointer; font-size: 13px; color: var(--text);
+}
+.session-btn.active { background: var(--green); color: white; border-color: var(--green); }
+
+.session-panel { display: none; }
+.session-panel.active { display: block; }
 
 /* ---------- Dish cards (Log Meal tab) ---------- */
 .dish-list { display: flex; flex-direction: column; gap: 14px; margin: 18px 0; }
+.dish-card { border: 1px solid var(--border); background: white; border-radius: 10px; padding: 14px 16px; }
+.dish-card h4 { margin: 0 0 10px 0; font-size: 15px; }
 
-.dish-card {
-  border: 1px solid var(--border);
-  background: white;
-  border-radius: 10px;
-  padding: 14px 16px;
+.take-card-body { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+
+/* ---- Vessel (bowl/glass) fill-slider ----
+   FIX for "slider colour not showing on desktop": we no longer rely on
+   the browser's native accent-color theming (inconsistent across
+   desktop vs mobile Chrome/Edge builds). Instead we render our own
+   coloured fill div and make the native <input type=range> invisible
+   but still fully functional/keyboard-accessible on top of it. */
+.vessel { position: relative; width: 64px; height: 90px; flex-shrink: 0; }
+.vessel-shape {
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0; overflow: hidden;
+  border: 2px solid #999; background: #fff;
 }
-
-.dish-card h3 { margin: 0 0 10px 0; font-size: 15px; color: var(--text); }
-
-.slider-row { margin-bottom: 8px; }
-.slider-row label { font-size: 12.5px; color: var(--muted); display: block; margin-bottom: 2px; }
-.slider-row input[type=range] { width: 100%; accent-color: var(--green); }
-
-.quarter-row { display: flex; gap: 6px; margin-bottom: 6px; }
-.quarter-row span.qlabel { font-size: 12.5px; color: var(--muted); width: 100%; }
-
-.quarter-btn {
-  flex: 1;
-  height: 36px;
-  border: 1px solid var(--border);
-  background: #f5f5f5;
-  border-radius: 6px;
+.vessel-shape.bowl { border-radius: 6px 6px 34px 34px / 6px 6px 50px 50px; }
+.vessel-shape.glass { border-radius: 4px 4px 10px 10px; }
+.vessel-fill {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 0%;
+  background: rgba(31, 122, 76, 0.55);
+  transition: height 0.12s ease-out;
+}
+.vessel-fill.waste-fill { background: rgba(192, 57, 43, 0.55); }
+.vessel-range {
+  position: absolute;
+  width: 90px; height: 24px;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%) rotate(-90deg);
+  opacity: 0;
   cursor: pointer;
-  font-size: 12px;
+  margin: 0;
 }
+.vessel-label { font-size: 11.5px; color: var(--muted); text-align: center; margin-top: 4px; }
 
-.quarter-btn.filled-taken { background: var(--green); border-color: var(--green); color: white; }
-.quarter-btn.filled-wasted { background: #c0392b; border-color: #c0392b; color: white; }
+.vessel-col { display: flex; flex-direction: column; align-items: center; }
+
+.stepper-row { display: flex; align-items: center; gap: 10px; font-size: 13.5px; }
+.stepper-btn {
+  width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--border);
+  background: #f5f5f5; cursor: pointer; font-size: 16px; line-height: 1;
+}
+.stepper-value { min-width: 70px; text-align: center; }
+
+/* Roti quadrant grid (taking-food partial control) */
+.quarter-row { display: flex; gap: 6px; margin-top: 6px; }
+.quarter-btn {
+  width: 34px; height: 34px; border: 1px solid var(--border); background: #f5f5f5;
+  border-radius: 6px; cursor: pointer; font-size: 11px;
+}
+.quarter-btn.filled { background: var(--green); border-color: var(--green); color: white; }
+
+.add-serving-btn {
+  background: var(--green-dark); color: white; border: none; padding: 8px 14px;
+  border-radius: 8px; font-size: 13px; cursor: pointer; margin-top: 8px;
+}
 
 .primary-btn {
-  background: var(--green);
-  color: white;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 8px;
-  font-size: 14.5px;
-  cursor: pointer;
+  background: var(--green); color: white; border: none; padding: 12px 20px;
+  border-radius: 8px; font-size: 14.5px; cursor: pointer;
 }
+.primary-btn.small { padding: 8px 14px; font-size: 13px; }
 .primary-btn:hover { background: var(--green-dark); }
 
 .confirm-msg { color: var(--green-dark); font-size: 13.5px; margin-top: 10px; min-height: 18px; }
 
-/* ---------- Mess Dashboard ---------- */
-.dashboard-chart { display: flex; flex-direction: column; gap: 10px; margin: 18px 0; }
+.meal-summary { margin-top: 20px; font-size: 13px; color: var(--muted); border-top: 1px solid var(--border); padding-top: 10px; }
+.meal-summary-item { display: flex; justify-content: space-between; padding: 2px 0; }
 
+/* ---------- Admin menu tab ---------- */
+.admin-add-row { display: flex; gap: 10px; margin: 14px 0; flex-wrap: wrap; }
+.admin-add-row select { flex: 1; min-width: 180px; padding: 8px; border-radius: 6px; border: 1px solid var(--border); }
+.admin-menu-list { display: flex; flex-direction: column; gap: 8px; }
+.admin-menu-item {
+  display: flex; justify-content: space-between; align-items: center;
+  background: white; border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: 13.5px;
+}
+.remove-dish-btn { background: none; border: none; color: var(--waste-red); cursor: pointer; font-size: 13px; }
+
+/* ---------- Mess Dashboard ---------- */
+.range-toggle { display: flex; gap: 6px; margin: 12px 0 18px 0; }
+.range-btn { background: white; border: 1px solid var(--border); padding: 6px 14px; border-radius: 16px; cursor: pointer; font-size: 12.5px; }
+.range-btn.active { background: var(--green); color: white; border-color: var(--green); }
+
+.dashboard-chart { display: flex; flex-direction: column; gap: 10px; margin: 18px 0; }
 .bar-row { display: flex; align-items: center; gap: 10px; }
-.bar-label { width: 90px; font-size: 13px; }
+.bar-label { width: 130px; font-size: 12.5px; }
 .bar-track { flex: 1; background: var(--green-bg); border-radius: 6px; height: 18px; overflow: hidden; }
-.bar-fill { background: #c0392b; height: 100%; border-radius: 6px 0 0 6px; }
+.bar-fill { background: var(--waste-red); height: 100%; border-radius: 6px 0 0 6px; }
 .bar-pct { width: 46px; font-size: 12.5px; text-align: right; color: var(--muted); }
 
-.swap-box {
-  background: var(--green-bg);
-  border-left: 4px solid var(--green);
-  padding: 10px 14px;
-  border-radius: 6px;
-  font-size: 13.5px;
-  margin-top: 10px;
-}
+.swap-box { background: var(--green-bg); border-left: 4px solid var(--green); padding: 10px 14px; border-radius: 6px; font-size: 13.5px; margin-top: 10px; }
 .swap-box p { margin: 4px 0; }
 
+.daily-breakdown { font-size: 12.5px; }
+.day-group { margin-bottom: 10px; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.day-group-header { background: var(--green-bg); padding: 6px 10px; font-weight: 600; color: var(--green-dark); }
+.day-group-row { display: flex; justify-content: space-between; padding: 4px 10px; border-top: 1px solid var(--border); }
+
 /* ---------- Weekly Digest ---------- */
-.profile-row { margin: 12px 0 18px 0; font-size: 13.5px; }
-.profile-row input { padding: 4px 8px; width: 70px; margin-left: 6px; }
+.profile-row { margin: 12px 0 18px 0; font-size: 13.5px; display: flex; gap: 18px; flex-wrap: wrap; }
+.profile-row input, .profile-row select { padding: 4px 8px; margin-left: 6px; }
+.profile-row input { width: 70px; }
 
 .digest-summary { display: flex; flex-direction: column; gap: 12px; }
-
-.nutrient-card {
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 12px 16px;
-  background: white;
-}
+.nutrient-card { border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; background: white; }
 .nutrient-card h4 { margin: 0 0 6px 0; font-size: 14px; }
 .progress-track { background: var(--green-bg); border-radius: 6px; height: 14px; overflow: hidden; }
 .progress-fill { background: var(--green); height: 100%; }
-.progress-fill.low { background: #c0392b; }
+.progress-fill.low { background: var(--waste-red); }
 .nutrient-note { font-size: 12.5px; color: var(--muted); margin-top: 6px; }
 
-.app-footer {
-  text-align: center;
-  font-size: 12px;
-  color: var(--muted);
-  padding: 20px 0;
+.app-footer { text-align: center; font-size: 12px; color: var(--muted); padding: 20px 0; }
+
+/* ---------- Mobile ---------- */
+@media (max-width: 480px) {
+  .take-card-body { flex-direction: row; }
+  .bar-label { width: 90px; }
+  main { padding: 16px 12px 50px 12px; }
 }
