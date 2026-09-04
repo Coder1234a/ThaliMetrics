@@ -44,6 +44,19 @@ python3 -m http.server 8000
 - The catch-up tracking panel only covers protein and iron (not all 11 tracked nutrients) to stay readable — full detail is still in the Weekly Digest.
 - Doctor/dietitian referral stays generic ("visit the campus health centre") — never a diagnosis or named supplement. Real safety line, not a scope-cut.
 
+## What's new in v4
+
+1. **Real bug fix**: the waste slider could previously be dragged to "full" even after taking only a partial portion (e.g., 3/4). Fixed properly — the slider's own range now shrinks to match what was actually taken, not just a clamped display number. Verified with the exact reported scenario.
+2. **Real photo assets** — the roti control now uses an actual photo (team-generated, so no copyright concern), and the ThaliMetrics logo appears in the header and on the pitch deck.
+3. **Glassmorphic visual redesign** — new sage/mint/cream palette, Manrope typeface, blurred glass cards, SVG progress rings on the Weekly Digest (replacing flat bars), a mobile bottom nav bar, and a subtle confirmation animation on logging a meal.
+4. **Pitch deck** — `docs/ThaliMetrics_Pitch.pptx`, an 11-slide deck following the team's own template agenda, content-aligned to the actual NutriHack judging criteria (pulled from the organizer's own deck).
+
+## Known simplifications carried into v4
+
+- Applied the glassmorphic spec to the existing single-page structure rather than the ~9-file architecture the design spec described — same functionality, far less risk this late in the build. Explicitly permitted by the spec itself ("adjust the structure if a better architecture is appropriate").
+- The Team Details slide in the pitch deck has placeholder `[fill in]` fields — team names weren't available to fill in automatically.
+
 ## Team workflow
 
 See `docs/TEAM_WORKFLOW.md`.
+

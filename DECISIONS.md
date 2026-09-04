@@ -6,6 +6,18 @@ Format: `Date — Decision — Why — Who`
 
 ---
 
+**2026-09-04** — Fixed the waste-slider bug by making the vessel/roti controls' own `max` shrink dynamically to match remaining room, not just clamping the saved value after the fact. — The reported symptom (waste slider reaching "full" after only 3/4 was taken) was a real bug: the partial control's range max was hardcoded to 1 regardless of how much was actually taken. Clamping only the saved number left the slider itself still draggable past what was possible. — v4 rebuild
+
+**2026-09-04** — Used the user's own AI-generated roti photo and provided logo instead of a web-scraped image. — The team supplied their own generated/owned assets, which resolves the copyright concern that ruled out real photos in earlier versions — this is now a real photo, not a CSS illustration. — v4 rebuild
+
+**2026-09-04** — Applied the glassmorphic visual spec to the existing single-page architecture rather than splitting into the ~9 separate HTML files the spec described. — The spec explicitly allows adjusting structure "if a better architecture is appropriate." A late-stage rearchitecture into multiple files risked breaking working, tested functionality for a purely visual goal achievable within the current structure. — v4 rebuild
+
+**2026-09-04** — Pitch deck built via pptxgenjs from scratch rather than editing the official NutriHack organizer template (Presentation_Resize.pptx). — That file is the event organizers' own rules/judging-criteria deck, not a per-team pitch template — editing it would misrepresent organizer content as team content. Built a fresh deck instead, following the agenda structure from the team's own template image, and pulled the real judging criteria from the organizer deck to align content to it. — v4 rebuild
+
+**2026-09-04** — Pitch deck uses Calibri, not Poppins/Manrope used in the web app. — Per the pptx skill's font-safety guidance, Poppins isn't bundled with Office and would silently substitute on the judges' actual machines, making our visual QA unreliable. Calibri renders identically in QA and in real PowerPoint. — v4 rebuild
+
+---
+
 **2026-09-04** — Merged the Mess Menu admin tab into the Log Meal page as an inline collapsible panel, scoped to whichever meal slot is currently selected. — Requested directly; also just simpler information architecture — the menu you're editing and the menu you're logging against are always the same one, so there's no reason they lived on separate tabs. — v3 rebuild
 
 **2026-09-04** — Roti, idli, and dosa all share the same round/quarter-tap illustrated control. — All three are round, quarterable items in practice, and building three separate illustrated controls for a hackathon demo wasn't worth the time versus one shared component. — v3 rebuild

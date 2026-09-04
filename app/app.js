@@ -80,16 +80,18 @@ function saveProfile(p) { saveJSON(PROFILE_KEY, p); }
 // ---------------------------------------------------------------
 // Tabs
 // ---------------------------------------------------------------
-document.querySelectorAll(".tab-btn").forEach(btn => {
-  btn.addEventListener("click", () => {
-    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-    document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
-    btn.classList.add("active");
-    document.getElementById("tab-" + btn.dataset.tab).classList.add("active");
-    if (btn.dataset.tab === "dashboard") renderDashboard();
-    if (btn.dataset.tab === "digest") renderDigest();
-    if (btn.dataset.tab === "log") renderLogTab();
-  });
+function switchTab(tabName) {
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.tab === tabName));
+  document.querySelectorAll(".bottom-nav-btn").forEach(b => b.classList.toggle("active", b.dataset.tab === tabName));
+  document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+  document.getElementById("tab-" + tabName).classList.add("active");
+  if (tabName === "dashboard") renderDashboard();
+  if (tabName === "digest") renderDigest();
+  if (tabName === "log") renderLogTab();
+}
+
+document.querySelectorAll(".tab-btn, .bottom-nav-btn").forEach(btn => {
+  btn.addEventListener("click", () => switchTab(btn.dataset.tab));
 });
 
 document.querySelectorAll(".session-btn").forEach(btn => {
@@ -117,7 +119,7 @@ document.getElementById("menu-admin-toggle-btn").addEventListener("click", () =>
 // Reusable vessel (bowl/glass) fill-slider control, with a live
 // percentage readout directly above it.
 // ---------------------------------------------------------------
-function createVesselControl({ shape, min, max, step, value, color, fillClass, onChange }) {
+function createVesselControl({ shape, min, max, step, value, color, fillClass, onChange, useRotiImage }) {
   const wrap = document.createElement("div");
   wrap.className = "controls-col";
 
@@ -136,12 +138,16 @@ function createVesselControl({ shape, min, max, step, value, color, fillClass, o
 
   const range = document.createElement("input");
   range.type = "range";
-  range.min = min; range.max = max; range.step = step; range.value = value;
+  range.min = min; range.max = max; range.step = step; range.value = Math.min(value, max);
   range.className = "vessel-range";
 
   function updateFill() {
-    const pct = max > min ? ((parseFloat(range.value) - min) / (max - min)) * 100 : 0;
+    const curMax = parseFloat(range.max);
+    const pct = curMax > min ? ((parseFloat(range.value) - min) / (curMax - min)) * 100 : 0;
     fillDiv.style.height = pct + "%";
+    // percentage label is relative to THIS vessel's own current max (i.e. how much of
+    // the currently-available room is filled), not a fixed 0-1 scale — this is what
+    // keeps the label/fill honest when max shrinks below 1.
     pctLabel.textContent = Math.round(pct) + "%";
   }
   updateFill();
@@ -150,6 +156,18 @@ function createVesselControl({ shape, min, max, step, value, color, fillClass, o
     updateFill();
     onChange(parseFloat(range.value));
   });
+
+  // Called whenever the "room left" for this control changes (e.g. the whole-unit
+  // stepper moved). Shrinks the slider's own max so it becomes physically impossible
+  // to drag past what's actually available — not just clamped after the fact.
+  wrap.updateMax = function (newMax) {
+    range.max = newMax;
+    if (parseFloat(range.value) > newMax) {
+      range.value = newMax;
+      onChange(newMax);
+    }
+    updateFill();
+  };
 
   shapeDiv.appendChild(fillDiv);
   vessel.appendChild(shapeDiv);
@@ -163,7 +181,7 @@ function createVesselControl({ shape, min, max, step, value, color, fillClass, o
 // ---------------------------------------------------------------
 // Reusable roti illustration with 4 tappable pie-slice quadrants.
 // ---------------------------------------------------------------
-function createRotiControl({ value, color, onChange }) {
+function createRotiControl({ value, color, onChange, maxQuarters }) {
   const wrap = document.createElement("div");
   wrap.className = "controls-col";
 
@@ -174,6 +192,8 @@ function createRotiControl({ value, color, onChange }) {
   illo.className = "roti-illustration";
 
   let currentQuarters = Math.round(value * 4);
+  let capQuarters = maxQuarters === undefined ? 4 : maxQuarters;
+  if (currentQuarters > capQuarters) currentQuarters = capQuarters;
 
   const quads = ["q1", "q2", "q3", "q4"].map((cls, i) => {
     const btn = document.createElement("button");
@@ -181,6 +201,7 @@ function createRotiControl({ value, color, onChange }) {
     btn.dataset.q = i + 1;
     btn.addEventListener("click", () => {
       const q = i + 1;
+      if (q > capQuarters) return; // can't select a quarter beyond what's actually available
       currentQuarters = currentQuarters === q ? q - 1 : q;
       refresh();
       onChange(currentQuarters / 4);
@@ -191,13 +212,32 @@ function createRotiControl({ value, color, onChange }) {
 
   function refresh() {
     quads.forEach(b => {
-      const filled = parseInt(b.dataset.q, 10) <= currentQuarters;
+      const q = parseInt(b.dataset.q, 10);
+      const filled = q <= currentQuarters;
+      const beyondCap = q > capQuarters;
       b.classList.toggle("eaten", filled);
-      b.style.background = filled ? (color ? hexToRgba(color, 0.55) : "rgba(90,50,15,0.4)") : "transparent";
+      b.classList.toggle("disabled-quad", beyondCap);
+      b.style.background = filled ? (color ? hexToRgba(color, 0.55) : "rgba(90,50,15,0.45)")
+        : beyondCap ? "rgba(120,120,120,0.35)" // visibly greyed-out — not selectable
+        : "transparent";
     });
-    pctLabel.textContent = Math.round((currentQuarters / 4) * 100) + "%";
+    // percentage relative to what's actually available (capQuarters), matching the
+    // vessel control's convention — so this always reads out of what CAN be selected.
+    const pctBase = capQuarters > 0 ? capQuarters : 4;
+    pctLabel.textContent = Math.round((currentQuarters / pctBase) * 100) + "%";
   }
   refresh();
+
+  // Called when the "room left" changes (whole-roti stepper moved) — shrinks how many
+  // quarters are selectable and pulls the current selection down if it's now too high.
+  wrap.updateMax = function (newMaxQuarters) {
+    capQuarters = newMaxQuarters;
+    if (currentQuarters > capQuarters) {
+      currentQuarters = capQuarters;
+      onChange(currentQuarters / 4);
+    }
+    refresh();
+  };
 
   wrap.appendChild(pctLabel);
   wrap.appendChild(illo);
@@ -378,12 +418,19 @@ function renderWasteList() {
     const entry = meal.entries[dishId];
     const takenUnits = entry.takenUnits;
     const maxWhole = Math.floor(takenUnits + 1e-9);
-    const maxPartialAtFullWhole = +(takenUnits - maxWhole).toFixed(2); // remainder when whole is maxed
+    const remainderAtMaxWhole = +(takenUnits - maxWhole).toFixed(4); // room left once whole is maxed
 
     wasteScratch[dishId] = wasteScratch[dishId] || { whole: 0, partial: 0, reason: entry.reason || null };
 
+    function partialCapFor(whole) {
+      return whole >= maxWhole ? remainderAtMaxWhole : 1;
+    }
+    // clamp any stale scratch value to what's actually possible for THIS meal's takenUnits
+    const initialCap = partialCapFor(wasteScratch[dishId].whole);
+    if (wasteScratch[dishId].partial > initialCap) wasteScratch[dishId].partial = initialCap;
+
     const card = document.createElement("div");
-    card.className = "dish-card";
+    card.className = "dish-card glass-card";
     card.innerHTML = `<h4>${dish.name} — you took ${takenUnits.toFixed(2)} ${unitWord(dish)}</h4>`;
 
     const body = document.createElement("div");
@@ -399,29 +446,31 @@ function renderWasteList() {
       saveActiveMeal(meal);
     }
 
+    let partialControl = null; // set below, referenced by the stepper's onChange
+
     // whole-unit stepper, capped at maxWhole (can't waste more whole units than were taken)
     const stepperCol = buildStepper(wasteScratch[dishId].whole, 0, maxWhole, (v) => {
       wasteScratch[dishId].whole = v;
-      // if whole is now at the cap, partial can't exceed the remainder
-      const partialCap = v >= maxWhole ? maxPartialAtFullWhole : 1;
-      if (wasteScratch[dishId].partial > partialCap) wasteScratch[dishId].partial = partialCap;
+      const newCap = partialCapFor(v);
+      if (wasteScratch[dishId].partial > newCap) wasteScratch[dishId].partial = newCap;
+      if (partialControl && partialControl.updateMax) partialControl.updateMax(newCap);
       updateReadout();
     });
     body.appendChild(stepperCol);
 
     if (dish.visual === "roti") {
-      const rotiCol = createRotiControl({
-        value: wasteScratch[dishId].partial, color: dish.color,
+      partialControl = createRotiControl({
+        value: wasteScratch[dishId].partial, color: dish.color, maxQuarters: Math.round(initialCap * 4),
         onChange: (v) => { wasteScratch[dishId].partial = v; updateReadout(); }
       });
-      body.appendChild(rotiCol);
+      body.appendChild(partialControl);
     } else if (dish.visual !== "fruit") {
-      const vesselCol = createVesselControl({
-        shape: dish.visual === "glass" ? "glass" : "bowl", min: 0, max: 1, step: 0.25,
+      partialControl = createVesselControl({
+        shape: dish.visual === "glass" ? "glass" : "bowl", min: 0, max: initialCap, step: 0.25,
         value: wasteScratch[dishId].partial, color: hexToRgba(dish.color, 0.65), fillClass: "waste-fill",
         onChange: (v) => { wasteScratch[dishId].partial = v; updateReadout(); }
       });
-      body.appendChild(vesselCol);
+      body.appendChild(partialControl);
     }
 
     body.appendChild(readout);
@@ -478,6 +527,9 @@ document.getElementById("finish-meal-btn").addEventListener("click", () => {
   clearActiveMeal();
   wasteScratch = {};
   msg.textContent = "Meal logged! Check the Mess Dashboard and Weekly Digest tabs to see it reflected.";
+  msg.classList.remove("show-anim");
+  void msg.offsetWidth; // restart animation if logging multiple meals in a row
+  msg.classList.add("show-anim");
   renderLogTab();
 });
 
@@ -784,12 +836,23 @@ function renderDigest() {
 function buildNutrientCard(label, consumedVal, target, unit, note) {
   const pct = target > 0 ? Math.min(100, Math.round((consumedVal / target) * 100)) : 0;
   const low = pct < 70;
+  const ringColor = low ? "#c0554a" : "#3f8f5f";
+
+  const radius = 34, circumference = 2 * Math.PI * radius;
+  const offset = circumference - (pct / 100) * circumference;
+
   const card = document.createElement("div");
   card.className = "nutrient-card";
   card.innerHTML = `
-    <h4>${label}: ${consumedVal.toFixed(1)}${unit} of ${target.toFixed(0)}${unit} target (${pct}%)</h4>
-    <div class="progress-track"><div class="progress-fill ${low ? "low" : ""}" style="width:${pct}%"></div></div>
-    <p class="nutrient-note">${note}${low ? " — tracking below target this week." : ""}</p>
+    <svg width="88" height="88" viewBox="0 0 88 88">
+      <circle cx="44" cy="44" r="${radius}" fill="none" stroke="rgba(63,143,95,0.15)" stroke-width="8"/>
+      <circle cx="44" cy="44" r="${radius}" fill="none" stroke="${ringColor}" stroke-width="8"
+        stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"
+        transform="rotate(-90 44 44)" style="transition: stroke-dashoffset 0.4s ease-out;"/>
+      <text x="44" y="49" text-anchor="middle" font-size="17" font-weight="800" fill="${ringColor}">${pct}%</text>
+    </svg>
+    <div class="nutrient-ring-label">${label}</div>
+    <div class="nutrient-note">${consumedVal.toFixed(1)}${unit} of ${target.toFixed(0)}${unit} target<br>${note}${low ? " — below target this week." : ""}</div>
   `;
   return card;
 }
