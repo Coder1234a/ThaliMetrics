@@ -6,12 +6,13 @@ One tap at the tray return tells you two things at once: what a student's diet i
 
 ## What's in this repo
 
-- **`/app`** — the working demo. Plain HTML/CSS/JS, no build step, no dependencies. Open `app/index.html` in a browser, or use the live GitHub Pages link.
-- **`IDEA.md`** — the one-page source of truth for what we're building and why. Read this before adding a feature.
+- **`/app`** — the working demo. Plain HTML/CSS/JS, no build step, no dependencies.
+- **`IDEA.md`** — the one-page source of truth for what we're building and why.
 - **`DECISIONS.md`** — running log of calls we've made and why.
-- **`docs/TEAM_WORKFLOW.md`** — the Claude prompts and habits we're using to build this fast.
+- **`docs/TEAM_WORKFLOW.md`** — Claude prompts/habits for the build.
 - **`docs/ThaliMetrics_Brief.pdf`** — problem/solution/features brief for the pitch.
-- **`docs/RESEARCH_REFERENCE.pdf`** — FSSAI Eat Right Campus + ICMR-NIN sourcing notes, so we can defend every number in the app if a judge asks.
+- **`docs/RESEARCH_REFERENCE.pdf`** — FSSAI + ICMR-NIN sourcing notes.
+- **`docs/COMPETITIVE_ANALYSIS.md`** — what we looked at (HealthifyMe, Leanpath, Winnow) and what we borrowed.
 
 ## Running the demo
 
@@ -21,33 +22,28 @@ python3 -m http.server 8000
 # then open http://localhost:8000
 ```
 
-Or just double-click `app/index.html` — no bundler, so it works standalone.
+## What's new in v3
 
-## What the demo currently does (v2)
-
-1. **Log My Meal** — split into two sessions, matching how eating actually works:
-   - **"I'm taking food"** — pick a dish, set a whole-unit count (stepper) plus a partial amount (a translucent fill-slider shaped like the vessel — bowl or glass — or a 4-quarter tap grid for roti), then "Add this to my meal." Taking a second helping later just means doing this again — it accumulates onto the same meal.
-   - **"I'm leaving / logging waste"** — for each dish you took this meal, a slider scaled *exactly* to how much you took (not a generic 0–100%) lets you show how much you're leaving.
-2. **Mess Menu** — admin tab where the mess sets which dishes are actually on today's menu; students only see and log what's picked here.
-3. **Mess Dashboard** — Today / This Week / This Month toggle, per-dish waste % chart, a swap suggestion for the worst-waste dish (Vellore/Tamil Nadu-relevant, FSSAI Eat Right Campus-aligned), and a daily categorized breakdown.
-4. **Weekly Digest** — every tracked nutrient shown (protein, iron, calcium, vitamin A, vitamin C, folate, B12, zinc, fiber — none skipped), targets computed from ICMR-NIN 2020 reference intakes, segmented by the student's own gender and body weight.
+1. **Log My Meal and Mess Menu are now one page.** An "Edit today's menu for this meal" toggle sits inline — no separate admin tab to hunt for.
+2. **Menus are per meal-slot.** Breakfast, lunch, snacks, and dinner each have their own dish list, seeded from a representative VIT Vellore-style sample menu (see the sourcing note at the top of `mockData.js` — this is a realistic sample, not the literal official monthly menu, since that isn't published anywhere this app could pull from).
+3. **Redesigned vessels.** Bowls are now wide and shallow instead of tall and narrow. Glasses taper narrower at the base for a more glass-like silhouette. Both show a live percentage label directly above the slider.
+4. **Illustrated roti** — a textured circular illustration (radial gradient + subtle speckling), not a flat button grid, still with 4 tappable quarters. Idli and dosa reuse the same round/quarter control since they're also round, quarter-able items. **Not a real photograph** — see "Known simplifications" below for why.
+5. **Live nutrient readout beside every dish's controls** — calories, protein, carbs, and fat prominently, plus a compact iron/calcium/vitamin A/vitamin C/folate/zinc/fiber line underneath, recalculating on every slider or stepper change. Always marked as approximate.
+6. **Per-dish colour tinting** — each dish's vessel fill uses its own colour (from `mockData.js`), so bowls are visually distinct at a glance, not just by label.
+7. **Waste logging mirrors taking exactly** — same whole-unit stepper + partial slider/quadrant pattern, but bounded so the total can never exceed what was actually taken for that dish (absolute, not relative — confirmed by test: taking 1.5 units caps the waste slider at 1.5, never 4).
+8. **Optional "why" tag on waste** — Too much served / Didn't like taste / Not hungry / Ran out of time. Borrowed from how commercial kitchen waste-tracking tools (Leanpath) separate a portion-size problem from a recipe problem instead of guessing from raw percentages. See `docs/COMPETITIVE_ANALYSIS.md`.
+9. **Mess Dashboard: top 3 wasted items per category**, ranked by wastage amount with an approximate nutrition-value-lost annotation alongside the existing single worst-offender swap suggestion.
+10. **Meal-level catch-up tracking** — before a later meal, if today's protein/iron intake so far is behind the expected pace for that point in the day, a panel flags it with a rough suggestion for the next meal.
+11. **Low-waste streak badge** — a small, cheap-to-compute engagement nudge counting consecutive recent meals under 15% waste.
 
 ## Known simplifications (be upfront about these with judges)
 
-- **No real food photos** — vessels (bowl/glass) are drawn as simple CSS/SVG-style shapes with a translucent fill, not photographs of actual mess dishes. Swapping in real photos is a v3 item, not a demo blocker.
-- Nutrient values in `app/data/mockData.js` are standard Indian food-composition estimates for common mess portions, not lab-measured for VIT's specific kitchen.
-- RDA targets use ICMR-NIN's adult (19–39y) bracket — see `docs/RESEARCH_REFERENCE.pdf` for exactly which secondary sources were cross-checked, and verify against the primary ICMR-NIN RDA-2020 report before treating any number as final.
-- No backend — data lives in `localStorage` per browser/device, not shared across devices yet.
-- Doctor/dietitian referral is intentionally generic ("visit the campus health centre") — the app never diagnoses or names supplements. This is a genuine safety line, not a scope-cut to walk back later.
-
-## A real bug we found and fixed while building this
-
-A **cross-browser rendering bug**: v1 relied on the browser's native `accent-color` styling for sliders, which rendered inconsistently between mobile and desktop Chrome — this is why the original bug report said "slider colour showing on phone, not on desktop." v2 fixes this properly by rendering our own coloured fill `<div>` instead of depending on native slider theming at all — the native `<input type="range">` is still there for real accessibility/interaction, just invisible, sitting on top.
-
-Separately, while building v2 we hit a **CSS compatibility bug**: the `inset: 0` shorthand collapsed the bowl/glass shape to nothing in an older rendering engine we used for a visual test. Fixed by using explicit `top/left/right/bottom: 0` instead — safer across a wider range of browsers/webviews, which matters if judges are looking at this on unpredictable devices.
-
-Both were caught by actually rendering the app and looking at it, not just eyeballing the code — worth doing the same before your demo.
+- **No real food photographs.** The roti/idli/dosa illustration and bowl/glass shapes are original CSS/SVG-style illustrations, not photos. We deliberately did not pull real photos from the web to use in the app — reproducing someone else's copyrighted food photography without a license is a real legal risk for a project going on GitHub Pages, not just a hackathon nicety. Swapping in properly licensed or team-taken photos is a clean v4 upgrade.
+- The VIT Vellore sample menu is representative (built from public student write-ups describing the typical rotating structure), not the literal official monthly menu — mess admins should edit the in-app menu to match what's actually posted.
+- Nutrient values are standard Indian food-composition estimates, not lab-measured for VIT's kitchen specifically.
+- The catch-up tracking panel only covers protein and iron (not all 11 tracked nutrients) to stay readable — full detail is still in the Weekly Digest.
+- Doctor/dietitian referral stays generic ("visit the campus health centre") — never a diagnosis or named supplement. Real safety line, not a scope-cut.
 
 ## Team workflow
 
-See `docs/TEAM_WORKFLOW.md` for the Claude Code slash-commands and prompting habits we're using during the build.
+See `docs/TEAM_WORKFLOW.md`.

@@ -26,12 +26,16 @@ ThaliMetrics is a tap-and-log app used at the tray-return point, built around tw
 ## What's on the demo path (build this)
 
 - [x] Session-based logging: take → (repeat for refills) → leave/waste, with absolute (not relative) waste scaling
-- [x] Vessel fill-slider (bowl/glass) and quarter-tap grid (roti) as the input controls
-- [x] Mess Menu admin tab (today's dishes are admin-set, not hardcoded)
-- [x] Mess Dashboard: Today/Week/Month toggle, per-dish waste %, daily categorized breakdown, local swap suggestion
-- [x] Weekly Digest: full micronutrient panel (protein, iron, calcium, vitamin A, vitamin C, folate, B12, zinc, fiber), gender + weight segmented
+- [x] Vessel fill-slider (bowl/glass) and illustrated quarter-tap roti control as the input controls
+- [x] Menu editing merged into the Log Meal page, scoped per meal-slot (breakfast/lunch/snacks/dinner)
+- [x] Mess Dashboard: Today/Week/Month toggle, per-dish waste %, top-3-wasted-per-category, daily categorized breakdown, local swap suggestion
+- [x] Weekly Digest: full nutrient panel (protein, carbs, fat, iron, calcium, vitamin A, vitamin C, folate, B12, zinc, fiber), gender + weight segmented
+- [x] Live nutrient readout per dish, updating with the slider/stepper
+- [x] Optional waste-reason tagging
+- [x] Meal-level catch-up tracking (protein/iron only, flagged before later meals)
+- [x] Low-waste streak badge
 - [ ] Seed a full mock "week" of data so the dashboard/digest look populated at demo time, not empty
-- [ ] Real food photos in place of the CSS/SVG vessel shapes (nice-to-have, not a blocker)
+- [ ] Real, properly licensed food photos in place of the current CSS/SVG illustrations (deliberately not scraped from the web — see README)
 
 ## What's explicitly OFF the demo path (future roadmap)
 

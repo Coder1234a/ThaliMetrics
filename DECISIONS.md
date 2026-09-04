@@ -6,6 +6,18 @@ Format: `Date — Decision — Why — Who`
 
 ---
 
+**2026-09-04** — Merged the Mess Menu admin tab into the Log Meal page as an inline collapsible panel, scoped to whichever meal slot is currently selected. — Requested directly; also just simpler information architecture — the menu you're editing and the menu you're logging against are always the same one, so there's no reason they lived on separate tabs. — v3 rebuild
+
+**2026-09-04** — Roti, idli, and dosa all share the same round/quarter-tap illustrated control. — All three are round, quarterable items in practice, and building three separate illustrated controls for a hackathon demo wasn't worth the time versus one shared component. — v3 rebuild
+
+**2026-09-04** — Did not pull a real photograph of a roti from the web for the quadrant control, despite that being the literal request. — Reproducing someone else's copyrighted food photography in an app going on public GitHub Pages is a real legal exposure, not just a style choice. Built an original illustrated version instead (radial-gradient texture + speckling) and flagged the substitution honestly in the README rather than silently reinterpreting the request. — v3 rebuild
+
+**2026-09-04** — Waste-reason tagging (Too much served / Didn't like taste / Not hungry / Ran out of time) is optional, not required to finish logging a meal. — Forcing a reason on every dish would slow down the exact five-second interaction the whole app is built around. Optional data is still useful data. — v3 rebuild
+
+**2026-09-04** — Catch-up tracking panel only covers protein and iron, not all 11 tracked nutrients. — These are the two headline deficiency nutrients cited throughout our own research (anaemia, protein RDA), and a panel trying to flag gaps across 11 nutrients before every meal would be unreadable. Full nutrient detail stays in the Weekly Digest. — v3 rebuild
+
+---
+
 **2026-09-04** — Rebuilt logging around two explicit sessions ("taking food" / "leaving mess") instead of one combined form. — Matches how eating with refills actually works, and directly answers the team's request for a "sessions" concept supporting second helpings without a data-model rewrite later. — v2 rebuild
 
 **2026-09-04** — Waste slider for each dish is scaled 0 → that dish's own takenUnits, not a generic 0–100%. — Explicit requirement: "ratios are being taken absolutely as per the bowl volume and not relative volume of serving taken." A generic percentage would silently misrepresent someone who took 3 bowls vs someone who took 1. — v2 rebuild

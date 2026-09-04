@@ -18,7 +18,6 @@
   </div>
   <nav class="tabs">
     <button class="tab-btn active" data-tab="log">Log My Meal</button>
-    <button class="tab-btn" data-tab="menu">Mess Menu</button>
     <button class="tab-btn" data-tab="dashboard">Mess Dashboard</button>
     <button class="tab-btn" data-tab="digest">Weekly Digest</button>
   </nav>
@@ -26,8 +25,10 @@
 
 <main>
 
-  <!-- ===================== STUDENT: LOG MEAL ===================== -->
+  <!-- ===================== MERGED: LOG MEAL + MENU ===================== -->
   <section id="tab-log" class="tab-panel active">
+
+    <div id="streak-badge-wrap"></div>
 
     <div class="meal-setup-row">
       <label>Meal:
@@ -44,15 +45,26 @@
       </div>
     </div>
 
+    <button id="menu-admin-toggle-btn" class="menu-admin-toggle">⚙ Edit today's menu for this meal</button>
+    <div id="menu-admin-panel" class="menu-admin-panel">
+      <div class="admin-add-row">
+        <select id="admin-dish-select"><!-- filled by app.js --></select>
+        <button id="admin-add-btn" class="add-serving-btn">Add to menu</button>
+      </div>
+      <div id="admin-menu-list" class="admin-menu-list"><!-- filled by app.js --></div>
+    </div>
+
+    <div id="catchup-panel"><!-- filled by app.js --></div>
+
     <!-- ---- TAKING FOOD session ---- -->
     <div id="session-taking" class="session-panel active">
-      <p class="hint">Set how much you're taking, then tap "Add this to my meal." Taking a second helping later? Just come back and add again — it all counts toward the same meal.</p>
+      <p class="hint">Set how much you're taking, then tap "Add this to my meal." Taking a second helping later? Just come back and add again.</p>
       <div id="take-dish-list" class="dish-list"><!-- filled by app.js --></div>
     </div>
 
     <!-- ---- LEAVING MESS session ---- -->
     <div id="session-leaving" class="session-panel">
-      <p class="hint">For each item you took this meal, show how much you're leaving. The scale matches exactly what you took — not a generic 0–100%.</p>
+      <p class="hint">For each item you took this meal, show how much you're leaving — the scale matches exactly what you took, not a generic 0–100%.</p>
       <div id="waste-dish-list" class="dish-list"><!-- filled by app.js --></div>
       <button id="finish-meal-btn" class="primary-btn">Finish meal &amp; log it</button>
       <p id="log-confirm" class="confirm-msg"></p>
@@ -61,23 +73,10 @@
     <div id="current-meal-summary" class="meal-summary"><!-- filled by app.js --></div>
   </section>
 
-  <!-- ===================== MESS: MENU ADMIN ===================== -->
-  <section id="tab-menu" class="tab-panel">
-    <h2>Today's Menu</h2>
-    <p class="hint">Mess admin sets which dishes are being served today. Students only see and log what's picked here.</p>
-
-    <div class="admin-add-row">
-      <select id="admin-dish-select"><!-- filled by app.js --></select>
-      <button id="admin-add-btn" class="primary-btn small">Add to today's menu</button>
-    </div>
-
-    <div id="admin-menu-list" class="admin-menu-list"><!-- filled by app.js --></div>
-  </section>
-
   <!-- ===================== MESS: DASHBOARD ===================== -->
   <section id="tab-dashboard" class="tab-panel">
     <h2>Waste dashboard</h2>
-    <p class="hint">Built from every logged meal. Highest-waste dish is flagged with a swap suggestion, in line with FSSAI Eat Right Campus criteria.</p>
+    <p class="hint">Built from every logged meal. Top-wasted items per category are flagged with a swap suggestion, in line with FSSAI Eat Right Campus criteria.</p>
 
     <div class="range-toggle">
       <button class="range-btn active" data-range="day">Today</button>
@@ -88,6 +87,10 @@
     <div id="dashboard-chart" class="dashboard-chart"><!-- filled by app.js --></div>
     <div id="swap-suggestions" class="swap-box"><!-- filled by app.js --></div>
 
+    <h3>Top 3 wasted, by category</h3>
+    <p class="hint">Ranked by wastage amount and nutrition value lost.</p>
+    <div id="top3-by-category"><!-- filled by app.js --></div>
+
     <h3>Daily breakdown</h3>
     <div id="daily-breakdown" class="daily-breakdown"><!-- filled by app.js --></div>
   </section>
@@ -95,7 +98,7 @@
   <!-- ===================== STUDENT: WEEKLY DIGEST ===================== -->
   <section id="tab-digest" class="tab-panel">
     <h2>Your week, in nutrients</h2>
-    <p class="hint">A once-a-week summary, not a daily nag. Based on ICMR-NIN reference intakes — every tracked micronutrient shown, none skipped.</p>
+    <p class="hint">A once-a-week summary, not a daily nag. Based on ICMR-NIN reference intakes — every tracked nutrient shown, none skipped.</p>
 
     <div class="profile-row">
       <label>Body weight (kg): <input id="weight-input" type="number" value="60" min="30" max="150" /></label>

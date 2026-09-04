@@ -28,107 +28,141 @@ body {
 .tab-btn.active { background: white; color: var(--green-dark); font-weight: 600; border-color: white; }
 
 /* ---------- Layout ---------- */
-main { max-width: 760px; margin: 0 auto; padding: 24px 18px 60px 18px; }
+main { max-width: 820px; margin: 0 auto; padding: 24px 18px 60px 18px; }
 .tab-panel { display: none; }
 .tab-panel.active { display: block; }
 h2 { color: var(--green-dark); margin-top: 0; }
 h3 { color: var(--green-dark); font-size: 15px; }
 .hint { color: var(--muted); font-size: 13.5px; margin-top: -4px; }
 
-/* ---------- Meal setup / session toggle ---------- */
-.meal-setup-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; margin-bottom: 14px; }
+/* ---------- Streak badge ---------- */
+.streak-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #fff4d6; border: 1px solid #e8c363; color: #7a5b12;
+  padding: 5px 12px; border-radius: 16px; font-size: 12.5px; font-weight: 600;
+  margin-bottom: 12px;
+}
+
+/* ---------- Meal setup / session toggle (merged page top bar) ---------- */
+.meal-setup-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; margin-bottom: 10px; }
 .meal-setup-row select { padding: 6px 8px; border-radius: 6px; border: 1px solid var(--border); }
 
 .session-toggle { display: flex; gap: 6px; }
-.session-btn {
-  background: white; border: 1px solid var(--border); padding: 8px 12px;
-  border-radius: 20px; cursor: pointer; font-size: 13px; color: var(--text);
-}
+.session-btn { background: white; border: 1px solid var(--border); padding: 8px 12px; border-radius: 20px; cursor: pointer; font-size: 13px; color: var(--text); }
 .session-btn.active { background: var(--green); color: white; border-color: var(--green); }
 
 .session-panel { display: none; }
 .session-panel.active { display: block; }
 
-/* ---------- Dish cards (Log Meal tab) ---------- */
-.dish-list { display: flex; flex-direction: column; gap: 14px; margin: 18px 0; }
+/* ---------- Catch-up tracking panel ---------- */
+.catchup-box {
+  background: #fdf3f0; border-left: 4px solid var(--waste-red);
+  padding: 10px 14px; border-radius: 6px; font-size: 13px; margin: 10px 0 16px 0;
+}
+.catchup-box.ontrack { background: var(--green-bg); border-left-color: var(--green); }
+.catchup-box p { margin: 3px 0; }
+
+/* ---------- Menu admin (inline, merged into Log Meal) ---------- */
+.menu-admin-toggle {
+  background: none; border: 1px solid var(--border); border-radius: 16px;
+  padding: 5px 12px; font-size: 12px; color: var(--muted); cursor: pointer; margin-bottom: 10px;
+}
+.menu-admin-panel {
+  display: none; background: #f7faf8; border: 1px solid var(--border); border-radius: 8px;
+  padding: 12px 14px; margin-bottom: 16px;
+}
+.menu-admin-panel.open { display: block; }
+.admin-add-row { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+.admin-add-row select { flex: 1; min-width: 160px; padding: 6px; border-radius: 6px; border: 1px solid var(--border); }
+.admin-menu-list { display: flex; flex-wrap: wrap; gap: 6px; }
+.admin-menu-chip {
+  display: inline-flex; align-items: center; gap: 6px; background: white;
+  border: 1px solid var(--border); border-radius: 14px; padding: 4px 10px; font-size: 12px;
+}
+.remove-dish-btn { background: none; border: none; color: var(--waste-red); cursor: pointer; font-size: 13px; padding: 0; }
+
+/* ---------- Dish cards ---------- */
+.dish-list { display: flex; flex-direction: column; gap: 14px; margin: 14px 0; }
 .dish-card { border: 1px solid var(--border); background: white; border-radius: 10px; padding: 14px 16px; }
 .dish-card h4 { margin: 0 0 10px 0; font-size: 15px; }
 
-.take-card-body { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+.take-card-body { display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap; }
+.controls-col { display: flex; flex-direction: column; gap: 8px; align-items: center; flex-shrink: 0; }
 
 /* ---- Vessel (bowl/glass) fill-slider ----
-   FIX for "slider colour not showing on desktop": we no longer rely on
-   the browser's native accent-color theming (inconsistent across
-   desktop vs mobile Chrome/Edge builds). Instead we render our own
-   coloured fill div and make the native <input type=range> invisible
-   but still fully functional/keyboard-accessible on top of it. */
-.vessel { position: relative; width: 64px; height: 90px; flex-shrink: 0; }
+   Renders its own coloured fill div rather than relying on native
+   accent-color theming (fixes the desktop/mobile colour-consistency
+   bug). Bowl is wide+shallow; glass tapers narrower at the base via
+   clip-path for a more glass-like silhouette. */
+.vessel { position: relative; width: 92px; height: 58px; }
+.vessel.glass { width: 60px; height: 84px; }
+
+.vessel-pct-label { font-size: 12px; font-weight: 600; color: var(--green-dark); margin-bottom: 3px; text-align: center; min-height: 15px; }
+
 .vessel-shape {
   position: absolute; top: 0; left: 0; right: 0; bottom: 0; overflow: hidden;
   border: 2px solid #999; background: #fff;
 }
-.vessel-shape.bowl { border-radius: 6px 6px 34px 34px / 6px 6px 50px 50px; }
-.vessel-shape.glass { border-radius: 4px 4px 10px 10px; }
-.vessel-fill {
-  position: absolute; left: 0; right: 0; bottom: 0; height: 0%;
-  background: rgba(31, 122, 76, 0.55);
-  transition: height 0.12s ease-out;
+.vessel-shape.bowl { border-radius: 8px 8px 46px 46px / 8px 8px 56px 56px; }
+.vessel-shape.glass {
+  border-radius: 6px 6px 6px 6px;
+  clip-path: polygon(8% 0%, 92% 0%, 82% 100%, 18% 100%);
 }
-.vessel-fill.waste-fill { background: rgba(192, 57, 43, 0.55); }
+.vessel-fill { position: absolute; left: 0; right: 0; bottom: 0; height: 0%; transition: height 0.12s ease-out; }
+.vessel-fill.waste-fill { opacity: 0.75; }
 .vessel-range {
-  position: absolute;
-  width: 90px; height: 24px;
-  top: 50%; left: 50%;
+  position: absolute; width: 90px; height: 24px; top: 50%; left: 50%;
   transform: translate(-50%, -50%) rotate(-90deg);
-  opacity: 0;
-  cursor: pointer;
-  margin: 0;
+  opacity: 0; cursor: pointer; margin: 0;
 }
-.vessel-label { font-size: 11.5px; color: var(--muted); text-align: center; margin-top: 4px; }
+.vessel-label { font-size: 11px; color: var(--muted); text-align: center; margin-top: 4px; }
 
-.vessel-col { display: flex; flex-direction: column; align-items: center; }
-
-.stepper-row { display: flex; align-items: center; gap: 10px; font-size: 13.5px; }
-.stepper-btn {
-  width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--border);
-  background: #f5f5f5; cursor: pointer; font-size: 16px; line-height: 1;
+/* ---- Roti: illustrated circular vessel with 4 tap quadrants ---- */
+.roti-illustration {
+  position: relative; width: 92px; height: 92px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #e8cd94, #d8ac6a 55%, #c08f45 85%);
+  box-shadow: inset 0 0 0 3px #b8873f, inset -6px -6px 14px rgba(120,70,20,0.25);
+  overflow: hidden;
 }
-.stepper-value { min-width: 70px; text-align: center; }
-
-/* Roti quadrant grid (taking-food partial control) */
-.quarter-row { display: flex; gap: 6px; margin-top: 6px; }
-.quarter-btn {
-  width: 34px; height: 34px; border: 1px solid var(--border); background: #f5f5f5;
-  border-radius: 6px; cursor: pointer; font-size: 11px;
+/* a few darker speckles to read as a real roti texture, not a flat circle */
+.roti-illustration::before, .roti-illustration::after {
+  content: ""; position: absolute; border-radius: 50%; background: rgba(120,70,20,0.35);
 }
-.quarter-btn.filled { background: var(--green); border-color: var(--green); color: white; }
+.roti-illustration::before { width: 8px; height: 6px; top: 22%; left: 60%; }
+.roti-illustration::after { width: 6px; height: 5px; top: 55%; left: 30%; }
 
-.add-serving-btn {
-  background: var(--green-dark); color: white; border: none; padding: 8px 14px;
-  border-radius: 8px; font-size: 13px; cursor: pointer; margin-top: 8px;
+.roti-quad-btn {
+  position: absolute; width: 50%; height: 50%; border: none; background: transparent;
+  cursor: pointer; padding: 0;
 }
+.roti-quad-btn.q1 { top: 0; left: 50%; clip-path: polygon(0 100%, 0 0, 100% 100%); } /* top-right pie slice */
+.roti-quad-btn.q2 { top: 50%; left: 50%; clip-path: polygon(0 0, 100% 0, 0 100%); }  /* bottom-right */
+.roti-quad-btn.q3 { top: 50%; left: 0; clip-path: polygon(100% 0, 100% 100%, 0 0);}  /* bottom-left */
+.roti-quad-btn.q4 { top: 0; left: 0; clip-path: polygon(0 100%, 100% 100%, 100% 0); } /* top-left */
+.roti-quad-btn.eaten { background: rgba(90, 50, 15, 0.4); }
 
-.primary-btn {
-  background: var(--green); color: white; border: none; padding: 12px 20px;
-  border-radius: 8px; font-size: 14.5px; cursor: pointer;
-}
-.primary-btn.small { padding: 8px 14px; font-size: 13px; }
+.stepper-row { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.stepper-btn { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--border); background: #f5f5f5; cursor: pointer; font-size: 15px; line-height: 1; }
+.stepper-value { min-width: 62px; text-align: center; }
+
+.add-serving-btn { background: var(--green-dark); color: white; border: none; padding: 8px 14px; border-radius: 8px; font-size: 13px; cursor: pointer; margin-top: 6px; }
+.primary-btn { background: var(--green); color: white; border: none; padding: 12px 20px; border-radius: 8px; font-size: 14.5px; cursor: pointer; }
 .primary-btn:hover { background: var(--green-dark); }
-
 .confirm-msg { color: var(--green-dark); font-size: 13.5px; margin-top: 10px; min-height: 18px; }
+
+/* ---------- Live nutrient readout (fills the empty space beside the vessel) ---------- */
+.nutrient-live-panel { flex: 1; min-width: 180px; font-size: 12px; }
+.nutrient-live-macro { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 6px; font-weight: 600; color: var(--green-dark); }
+.nutrient-live-micro { color: var(--muted); line-height: 1.6; }
+.nutrient-approx-note { font-size: 10.5px; color: #999; font-style: italic; margin-top: 4px; }
+
+/* ---------- Waste reason chips ---------- */
+.reason-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.reason-chip { background: white; border: 1px solid var(--border); border-radius: 14px; padding: 4px 10px; font-size: 11.5px; cursor: pointer; }
+.reason-chip.selected { background: var(--green-dark); color: white; border-color: var(--green-dark); }
 
 .meal-summary { margin-top: 20px; font-size: 13px; color: var(--muted); border-top: 1px solid var(--border); padding-top: 10px; }
 .meal-summary-item { display: flex; justify-content: space-between; padding: 2px 0; }
-
-/* ---------- Admin menu tab ---------- */
-.admin-add-row { display: flex; gap: 10px; margin: 14px 0; flex-wrap: wrap; }
-.admin-add-row select { flex: 1; min-width: 180px; padding: 8px; border-radius: 6px; border: 1px solid var(--border); }
-.admin-menu-list { display: flex; flex-direction: column; gap: 8px; }
-.admin-menu-item {
-  display: flex; justify-content: space-between; align-items: center;
-  background: white; border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: 13.5px;
-}
-.remove-dish-btn { background: none; border: none; color: var(--waste-red); cursor: pointer; font-size: 13px; }
 
 /* ---------- Mess Dashboard ---------- */
 .range-toggle { display: flex; gap: 6px; margin: 12px 0 18px 0; }
@@ -144,6 +178,11 @@ h3 { color: var(--green-dark); font-size: 15px; }
 
 .swap-box { background: var(--green-bg); border-left: 4px solid var(--green); padding: 10px 14px; border-radius: 6px; font-size: 13.5px; margin-top: 10px; }
 .swap-box p { margin: 4px 0; }
+
+.category-block { margin-bottom: 16px; }
+.category-block h4 { margin: 0 0 6px 0; font-size: 13.5px; color: var(--green-dark); text-transform: capitalize; }
+.top3-row { display: flex; justify-content: space-between; padding: 4px 10px; border: 1px solid var(--border); border-radius: 6px; margin-bottom: 4px; font-size: 12.5px; background: white; }
+.top3-rank { color: var(--muted); width: 20px; }
 
 .daily-breakdown { font-size: 12.5px; }
 .day-group { margin-bottom: 10px; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
@@ -165,9 +204,7 @@ h3 { color: var(--green-dark); font-size: 15px; }
 
 .app-footer { text-align: center; font-size: 12px; color: var(--muted); padding: 20px 0; }
 
-/* ---------- Mobile ---------- */
 @media (max-width: 480px) {
-  .take-card-body { flex-direction: row; }
-  .bar-label { width: 90px; }
   main { padding: 16px 12px 50px 12px; }
+  .bar-label { width: 90px; }
 }
