@@ -6,6 +6,20 @@ Format: `Date — Decision — Why — Who`
 
 ---
 
+**2026-09-04** — Real wordmark logo (green gradient "ThaliMetrics" text + leaf accent + "EAT · TRACK · IMPROVE" tagline) placed inside a white rounded badge on both the website header and the pitch deck cover, rather than directly on the dark green background. — The logo's text is green-on-white; placing it directly on our dark green header/slide background would have created a real contrast problem (green text nearly invisible against dark green). The white badge treatment keeps it fully legible while still sitting naturally within the brand's green palette. Same treatment applied consistently in both places. — v6 rebuild (logo update)
+
+**2026-09-04** — Removed the old circular plate/fork/spoon icon logo asset from the project entirely once the wordmark replaced it everywhere. — No remaining references after the swap; kept the asset folder clean rather than leaving a dead file. — v6 rebuild (logo update)
+
+---
+
+**2026-09-04** — Used the existing logo asset (from `1_jpg.jpeg`) for both the website header and the pitch deck cover, instead of the "2.jpeg" the person referenced. — That upload came through as a 0-byte file in this conversation (confirmed by checking the uploads directory directly) — it never actually arrived. Flagged this honestly rather than silently reusing the old asset without explanation. — v6 rebuild
+
+**2026-09-04** — Rebuilt the pitch deck's narrative substantially (problem framing, the refill-example insight slide, the misleading-percentages slide, the comparison table) rather than just bumping font sizes. — The person supplied a genuinely strong strategic pitch outline; incorporating it properly needed real content changes, not just a cosmetic font pass. Kept the mandated template section labels/order throughout, letting two sections (Proposed Solution, Innovation & USP) span two slides each rather than cramming. — v6 rebuild
+
+**2026-09-04** — Updated the food-waste citation from 17% (2021 UNEP report) to 19% (2024 UNEP/WRAP Food Waste Index Report). — Verified via search that a newer edition exists with updated 2022 data; using the older figure once a newer one is confirmed available would be citing stale data. — v6 rebuild
+
+---
+
 **2026-09-04** — Menu editing moved entirely out of the student-facing Log Meal page into a new role-gated Admin Panel tab. — Directly requested: "only mess admins can edit menus and not students." The role switcher is client-side only (no real auth) since this is a demo, not a production access-control system — noted honestly rather than implied otherwise. — v5 rebuild
 
 **2026-09-04** — "Popularity" for Warden Insights is measured as number of separate logged meals a dish appeared in, not total volume taken. — Volume conflates a dish being popular with just being served in large default portions. Meal-count is a cleaner read of "how often did students actually choose this." — v5 rebuild
