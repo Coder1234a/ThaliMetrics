@@ -51,6 +51,14 @@ python3 -m http.server 8000
 3. **Glassmorphic visual redesign** — new sage/mint/cream palette, Manrope typeface, blurred glass cards, SVG progress rings on the Weekly Digest (replacing flat bars), a mobile bottom nav bar, and a subtle confirmation animation on logging a meal.
 4. **Pitch deck** — `docs/ThaliMetrics_Pitch.pptx`, an 11-slide deck following the team's own template agenda, content-aligned to the actual NutriHack judging criteria (pulled from the organizer's own deck).
 
+## What's new in v5
+
+1. **Role separation** — a "Viewing as: Student / Mess Admin" switcher in the header. Students can only pick from the menu; menu editing lives entirely in a new **Admin Panel** tab, visible only when the admin role is selected. (Client-side only, no real auth — it's a demo role switch, not an access-control system.)
+2. **Warden Insights** (Admin Panel tab) — Today/Week/Month toggle showing approx. kg of food served, meals logged, most-picked dishes, and least-picked dishes each with a swap suggestion — dish-specific where we have one, category-level otherwise — citing FSSAI Eat Right Campus and ICMR-NIN.
+3. **Roti control** is now a plain white circle instead of a photo.
+4. **Lighter, higher-contrast UI** — blur reduced from 14–16px to 7–10px, glass-card opacity raised from 0.55 to 0.82, ambient background gradients softened. Addresses both a real mobile-performance concern (heavy blur on repeated small cards) and general readability.
+5. **A real CSS bug found via visual QA, not automated tests**: a specificity conflict let the Admin nav icon show for students despite every DOM-level test passing. See `DECISIONS.md` for the fix and why this matters for how we test going forward.
+
 ## Known simplifications carried into v4
 
 - Applied the glassmorphic spec to the existing single-page structure rather than the ~9-file architecture the design spec described — same functionality, far less risk this late in the build. Explicitly permitted by the spec itself ("adjust the structure if a better architecture is appropriate").

@@ -24,41 +24,41 @@
 // a glance, not just by label.
 // ---------------------------------------------------------------
 const MOCK_DISH_LIBRARY = [
-  { id: "dal", name: "Dal", category: "gravy", visual: "bowl", color: "#c99a3f",
+  { id: "dal", name: "Dal", category: "gravy", visual: "bowl", color: "#c99a3f", gramsPerUnit: 180,
     nutrients: { calories: 150, protein_g: 9, carbs_g: 20, fats_g: 4, iron_mg: 2.5, calcium_mg: 40, vitaminA_mcg: 8, vitaminC_mg: 2, folate_mcg: 100, vitaminB12_mcg: 0, zinc_mg: 1.3, fiber_g: 5 } },
-  { id: "sambar", name: "Sambar", category: "gravy", visual: "bowl", color: "#d9832b",
+  { id: "sambar", name: "Sambar", category: "gravy", visual: "bowl", color: "#d9832b", gramsPerUnit: 200,
     nutrients: { calories: 120, protein_g: 5, carbs_g: 18, fats_g: 3, iron_mg: 1.8, calcium_mg: 35, vitaminA_mcg: 60, vitaminC_mg: 6, folate_mcg: 60, vitaminB12_mcg: 0, zinc_mg: 0.7, fiber_g: 4 } },
-  { id: "rasam", name: "Rasam", category: "gravy", visual: "bowl", color: "#c85a3d",
+  { id: "rasam", name: "Rasam", category: "gravy", visual: "bowl", color: "#c85a3d", gramsPerUnit: 150,
     nutrients: { calories: 60, protein_g: 2, carbs_g: 10, fats_g: 1, iron_mg: 0.8, calcium_mg: 15, vitaminA_mcg: 10, vitaminC_mg: 8, folate_mcg: 20, vitaminB12_mcg: 0, zinc_mg: 0.3, fiber_g: 1.5 } },
-  { id: "mixed_veg_gravy", name: "Mixed Veg Gravy", category: "gravy", visual: "bowl", color: "#b5501f",
+  { id: "mixed_veg_gravy", name: "Mixed Veg Gravy", category: "gravy", visual: "bowl", color: "#b5501f", gramsPerUnit: 180,
     nutrients: { calories: 130, protein_g: 3, carbs_g: 15, fats_g: 6, iron_mg: 1.2, calcium_mg: 45, vitaminA_mcg: 180, vitaminC_mg: 12, folate_mcg: 40, vitaminB12_mcg: 0, zinc_mg: 0.5, fiber_g: 3.5 } },
-  { id: "chutney", name: "Chutney", category: "gravy", visual: "bowl", color: "#6f9c3f",
+  { id: "chutney", name: "Chutney", category: "gravy", visual: "bowl", color: "#6f9c3f", gramsPerUnit: 60,
     nutrients: { calories: 45, protein_g: 1, carbs_g: 3, fats_g: 3.5, iron_mg: 0.4, calcium_mg: 20, vitaminA_mcg: 5, vitaminC_mg: 4, folate_mcg: 10, vitaminB12_mcg: 0, zinc_mg: 0.2, fiber_g: 1.5 } },
-  { id: "poriyal", name: "Poriyal (Dry Sabzi)", category: "dry", visual: "bowl", color: "#e0a83c",
+  { id: "poriyal", name: "Poriyal (Dry Sabzi)", category: "dry", visual: "bowl", color: "#e0a83c", gramsPerUnit: 100,
     nutrients: { calories: 90, protein_g: 2.5, carbs_g: 10, fats_g: 4, iron_mg: 1.0, calcium_mg: 50, vitaminA_mcg: 150, vitaminC_mg: 15, folate_mcg: 35, vitaminB12_mcg: 0, zinc_mg: 0.4, fiber_g: 3 } },
-  { id: "keerai", name: "Keerai (Greens Poriyal)", category: "dry", visual: "bowl", color: "#4f8a3d",
+  { id: "keerai", name: "Keerai (Greens Poriyal)", category: "dry", visual: "bowl", color: "#4f8a3d", gramsPerUnit: 100,
     nutrients: { calories: 70, protein_g: 3, carbs_g: 7, fats_g: 3, iron_mg: 2.8, calcium_mg: 90, vitaminA_mcg: 300, vitaminC_mg: 20, folate_mcg: 80, vitaminB12_mcg: 0, zinc_mg: 0.5, fiber_g: 3.5 } },
-  { id: "curd", name: "Curd", category: "dry", visual: "bowl", color: "#f2f0e6",
+  { id: "curd", name: "Curd", category: "dry", visual: "bowl", color: "#f2f0e6", gramsPerUnit: 100,
     nutrients: { calories: 60, protein_g: 3.5, carbs_g: 4, fats_g: 3, iron_mg: 0.1, calcium_mg: 120, vitaminA_mcg: 15, vitaminC_mg: 0.5, folate_mcg: 5, vitaminB12_mcg: 0.4, zinc_mg: 0.4, fiber_g: 0 } },
-  { id: "upma", name: "Upma", category: "dry", visual: "bowl", color: "#d4b25a",
+  { id: "upma", name: "Upma", category: "dry", visual: "bowl", color: "#d4b25a", gramsPerUnit: 200,
     nutrients: { calories: 180, protein_g: 4, carbs_g: 28, fats_g: 6, iron_mg: 1.0, calcium_mg: 20, vitaminA_mcg: 20, vitaminC_mg: 3, folate_mcg: 15, vitaminB12_mcg: 0, zinc_mg: 0.6, fiber_g: 2.5 } },
-  { id: "rice", name: "Rice", category: "gravy", visual: "bowl", color: "#f5f2e6",
+  { id: "rice", name: "Rice", category: "gravy", visual: "bowl", color: "#f5f2e6", gramsPerUnit: 200,
     nutrients: { calories: 200, protein_g: 2.5, carbs_g: 45, fats_g: 0.5, iron_mg: 0.3, calcium_mg: 5, vitaminA_mcg: 0, vitaminC_mg: 0, folate_mcg: 10, vitaminB12_mcg: 0, zinc_mg: 0.5, fiber_g: 0.5 } },
-  { id: "roti", name: "Roti", category: "flat", visual: "roti", color: "#c9a876",
+  { id: "roti", name: "Roti", category: "flat", visual: "roti", color: "#c9a876", gramsPerUnit: 30,
     nutrients: { calories: 80, protein_g: 3, carbs_g: 15, fats_g: 1, iron_mg: 0.8, calcium_mg: 10, vitaminA_mcg: 0, vitaminC_mg: 0, folate_mcg: 8, vitaminB12_mcg: 0, zinc_mg: 0.4, fiber_g: 1.5 } },
-  { id: "dosa", name: "Dosa", category: "flat", visual: "roti", color: "#d9c48a",
+  { id: "dosa", name: "Dosa", category: "flat", visual: "roti", color: "#d9c48a", gramsPerUnit: 90,
     nutrients: { calories: 133, protein_g: 3.5, carbs_g: 22, fats_g: 3.5, iron_mg: 0.9, calcium_mg: 12, vitaminA_mcg: 0, vitaminC_mg: 0, folate_mcg: 12, vitaminB12_mcg: 0, zinc_mg: 0.4, fiber_g: 1 } },
-  { id: "idli", name: "Idli (2 pcs)", category: "flat", visual: "roti", color: "#f2ede1",
+  { id: "idli", name: "Idli (2 pcs)", category: "flat", visual: "roti", color: "#f2ede1", gramsPerUnit: 80,
     nutrients: { calories: 78, protein_g: 2.5, carbs_g: 16, fats_g: 0.3, iron_mg: 0.5, calcium_mg: 10, vitaminA_mcg: 0, vitaminC_mg: 0, folate_mcg: 10, vitaminB12_mcg: 0, zinc_mg: 0.3, fiber_g: 0.8 } },
-  { id: "samosa", name: "Samosa", category: "flat", visual: "roti", color: "#c98a3d",
+  { id: "samosa", name: "Samosa", category: "flat", visual: "roti", color: "#c98a3d", gramsPerUnit: 60,
     nutrients: { calories: 260, protein_g: 4, carbs_g: 30, fats_g: 14, iron_mg: 1.0, calcium_mg: 15, vitaminA_mcg: 10, vitaminC_mg: 2, folate_mcg: 12, vitaminB12_mcg: 0, zinc_mg: 0.4, fiber_g: 2 } },
-  { id: "buttermilk", name: "Buttermilk (Moru)", category: "liquid", visual: "glass", color: "#f2ecc9",
+  { id: "buttermilk", name: "Buttermilk (Moru)", category: "liquid", visual: "glass", color: "#f2ecc9", gramsPerUnit: 200,
     nutrients: { calories: 40, protein_g: 2, carbs_g: 3, fats_g: 1.5, iron_mg: 0.1, calcium_mg: 80, vitaminA_mcg: 10, vitaminC_mg: 0.5, folate_mcg: 3, vitaminB12_mcg: 0.2, zinc_mg: 0.2, fiber_g: 0 } },
-  { id: "tea", name: "Tea / Coffee", category: "liquid", visual: "glass", color: "#8a5a2f",
+  { id: "tea", name: "Tea / Coffee", category: "liquid", visual: "glass", color: "#8a5a2f", gramsPerUnit: 150,
     nutrients: { calories: 55, protein_g: 1.5, carbs_g: 8, fats_g: 2, iron_mg: 0.1, calcium_mg: 40, vitaminA_mcg: 5, vitaminC_mg: 0, folate_mcg: 2, vitaminB12_mcg: 0.1, zinc_mg: 0.1, fiber_g: 0 } },
-  { id: "juice", name: "Fruit Juice", category: "liquid", visual: "glass", color: "#e08a2e",
+  { id: "juice", name: "Fruit Juice", category: "liquid", visual: "glass", color: "#e08a2e", gramsPerUnit: 200,
     nutrients: { calories: 90, protein_g: 0.5, carbs_g: 22, fats_g: 0.1, iron_mg: 0.2, calcium_mg: 10, vitaminA_mcg: 20, vitaminC_mg: 25, folate_mcg: 15, vitaminB12_mcg: 0, zinc_mg: 0.1, fiber_g: 0.5 } },
-  { id: "banana", name: "Banana", category: "fruit", visual: "fruit", color: "#e8d24a",
+  { id: "banana", name: "Banana", category: "fruit", visual: "fruit", color: "#e8d24a", gramsPerUnit: 120,
     nutrients: { calories: 105, protein_g: 1.3, carbs_g: 27, fats_g: 0.4, iron_mg: 0.3, calcium_mg: 6, vitaminA_mcg: 4, vitaminC_mg: 10, folate_mcg: 24, vitaminB12_mcg: 0, zinc_mg: 0.2, fiber_g: 3.1 } }
 ];
 
@@ -113,6 +113,18 @@ const MOCK_LOCAL_SWAPS = {
   fruit: "Local seasonal fruit (guava, banana) is typically fresher and cheaper than fruit trucked in from other states."
 };
 
+// Dish-specific swaps, used in preference to the category fallback above when
+// available — grounded in FSSAI Eat Right Campus's "local & seasonal food"
+// criterion and ICMR-NIN's nutrient-density guidance, not just generic advice.
+const MOCK_DISH_SPECIFIC_SWAPS = {
+  mixed_veg_gravy: "Rotate in a drumstick or banana-flower gravy in season — similar cook time, higher iron/folate density per ICMR-NIN food tables, and typically cheaper than off-season mixed veg.",
+  poriyal: "Swap toward beetroot, cabbage, or banana stem poriyal depending on season — comparable prep, often better student acceptance than the current rotation.",
+  upma: "Pair with a vegetable-loaded variant (carrot/beans upma) — same base cost, meaningfully higher fiber and vitamin A per ICMR-NIN reference values.",
+  rice: "No swap needed — consider a smaller default scoop size instead, since rice is rarely the nutrient gap, usually the portion-size issue.",
+  samosa: "A baked or shallow-fried version cuts fat content meaningfully (ICMR-NIN fat RDA is 55–65g/day) while keeping the same flavour profile.",
+  chutney: "Coconut chutney can rotate with a coriander or tomato base to vary vitamin C content without changing prep complexity."
+};
+
 // Quick-select reasons a student can (optionally) tag when logging
 // waste — borrowed from how commercial kitchen waste-tracking tools
 // (e.g. Leanpath) capture *why* food was wasted, not just how much.
@@ -130,4 +142,5 @@ window.THALIMETRICS_SAMPLE_MENU_BY_SLOT = MOCK_SAMPLE_MENU_BY_SLOT;
 window.THALIMETRICS_RDA_TABLE = MOCK_RDA_TABLE;
 window.THALIMETRICS_NUTRIENT_META = MOCK_NUTRIENT_META;
 window.THALIMETRICS_LOCAL_SWAPS = MOCK_LOCAL_SWAPS;
+window.THALIMETRICS_DISH_SPECIFIC_SWAPS = MOCK_DISH_SPECIFIC_SWAPS;
 window.THALIMETRICS_WASTE_REASONS = MOCK_WASTE_REASONS;

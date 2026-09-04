@@ -22,6 +22,7 @@ const SAMPLE_MENU_BY_SLOT = window.THALIMETRICS_SAMPLE_MENU_BY_SLOT;
 const RDA_TABLE = window.THALIMETRICS_RDA_TABLE;
 const NUTRIENT_META = window.THALIMETRICS_NUTRIENT_META;
 const LOCAL_SWAPS = window.THALIMETRICS_LOCAL_SWAPS;
+const DISH_SPECIFIC_SWAPS = window.THALIMETRICS_DISH_SPECIFIC_SWAPS;
 const WASTE_REASONS = window.THALIMETRICS_WASTE_REASONS;
 
 const MEAL_SLOTS = ["breakfast", "lunch", "snacks", "dinner"];
@@ -77,6 +78,18 @@ function appendLogs(entries) { const logs = getLogs(); logs.push(...entries); sa
 function getProfile() { return loadJSON(PROFILE_KEY, { weight: 60, gender: "male" }); }
 function saveProfile(p) { saveJSON(PROFILE_KEY, p); }
 
+const ROLE_KEY = "thalimetrics_role";
+function getRole() { return loadJSON(ROLE_KEY, "student"); }
+function setRole(role) {
+  saveJSON(ROLE_KEY, role);
+  document.body.classList.toggle("role-admin", role === "admin");
+  document.querySelectorAll(".role-btn").forEach(b => b.classList.toggle("active", b.dataset.role === role));
+  // if a student switches away from admin while sitting on the Admin tab, bounce to Log Meal
+  if (role === "student" && document.getElementById("tab-admin").classList.contains("active")) {
+    switchTab("log");
+  }
+}
+
 // ---------------------------------------------------------------
 // Tabs
 // ---------------------------------------------------------------
@@ -88,10 +101,20 @@ function switchTab(tabName) {
   if (tabName === "dashboard") renderDashboard();
   if (tabName === "digest") renderDigest();
   if (tabName === "log") renderLogTab();
+  if (tabName === "admin") { renderAdminPanel(); renderWardenInsights(); }
 }
 
 document.querySelectorAll(".tab-btn, .bottom-nav-btn").forEach(btn => {
-  btn.addEventListener("click", () => switchTab(btn.dataset.tab));
+  btn.addEventListener("click", () => {
+    // belt-and-braces: a student clicking a hidden admin nav element (shouldn't be
+    // reachable via UI, but guards against it regardless) never opens the admin tab
+    if (btn.dataset.tab === "admin" && getRole() !== "admin") return;
+    switchTab(btn.dataset.tab);
+  });
+});
+
+document.querySelectorAll(".role-btn").forEach(btn => {
+  btn.addEventListener("click", () => setRole(btn.dataset.role));
 });
 
 document.querySelectorAll(".session-btn").forEach(btn => {
@@ -106,13 +129,6 @@ document.querySelectorAll(".session-btn").forEach(btn => {
 
 document.getElementById("meal-slot-select").addEventListener("change", () => {
   renderLogTab();
-  renderAdminPanel();
-});
-
-document.getElementById("menu-admin-toggle-btn").addEventListener("click", () => {
-  const panel = document.getElementById("menu-admin-panel");
-  panel.classList.toggle("open");
-  if (panel.classList.contains("open")) renderAdminPanel();
 });
 
 // ---------------------------------------------------------------
@@ -552,7 +568,7 @@ function renderMealSummary() {
 // Inline menu admin panel (edits the CURRENT meal slot's menu)
 // ---------------------------------------------------------------
 function renderAdminPanel() {
-  const slot = currentSlot();
+  const slot = document.getElementById("admin-meal-slot-select").value;
   const menuBySlot = getMenuBySlot();
   const currentIds = menuBySlot[slot] || [];
 
@@ -586,7 +602,7 @@ function renderAdminPanel() {
 }
 
 document.getElementById("admin-add-btn").addEventListener("click", () => {
-  const slot = currentSlot();
+  const slot = document.getElementById("admin-meal-slot-select").value;
   const dishId = document.getElementById("admin-dish-select").value;
   if (!dishId) return;
   const menuBySlot = getMenuBySlot();
@@ -595,6 +611,8 @@ document.getElementById("admin-add-btn").addEventListener("click", () => {
   renderAdminPanel();
   renderTakeList();
 });
+
+document.getElementById("admin-meal-slot-select").addEventListener("change", renderAdminPanel);
 
 // ---------------------------------------------------------------
 // Streak badge — consecutive most-recent FINISHED meals with waste
@@ -796,6 +814,93 @@ function renderDashboard() {
 }
 
 // ---------------------------------------------------------------
+// WARDEN INSIGHTS (Admin tab) — usage volume, popularity ranking,
+// and local/seasonal swap suggestions for under-picked dishes.
+// "Popularity" = number of separate logged meals a dish appeared
+// in during the range, which is a direct read of how often
+// students actually chose it, not just how much was wasted.
+// ---------------------------------------------------------------
+let currentWardenRange = "day";
+document.querySelectorAll("#warden-range-toggle .range-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll("#warden-range-toggle .range-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    currentWardenRange = btn.dataset.wrange;
+    renderWardenInsights();
+  });
+});
+
+function renderWardenInsights() {
+  const logs = logsInRange(currentWardenRange);
+  const summaryBox = document.getElementById("warden-summary");
+  const mostBox = document.getElementById("warden-most-picked");
+  const leastBox = document.getElementById("warden-least-picked");
+  summaryBox.innerHTML = ""; mostBox.innerHTML = ""; leastBox.innerHTML = "";
+
+  if (logs.length === 0) {
+    summaryBox.innerHTML = `<p class="hint">No meals logged in this range yet.</p>`;
+    return;
+  }
+
+  // aggregate: kg served, and how many separate meals each dish was chosen in
+  let totalKg = 0;
+  const pickCounts = {}; // dishId -> number of meals it appeared in
+  const mealsSeen = new Set();
+
+  logs.forEach(entry => {
+    const dish = findDish(entry.dishId);
+    if (!dish) return;
+    totalKg += (dish.gramsPerUnit * entry.takenUnits) / 1000;
+    pickCounts[entry.dishId] = (pickCounts[entry.dishId] || 0) + 1;
+    mealsSeen.add(entry.date + "|" + entry.mealSlot);
+  });
+
+  summaryBox.innerHTML = `
+    <div class="warden-stat-card">
+      <div class="warden-stat-value">${totalKg.toFixed(1)} kg</div>
+      <div class="warden-stat-label">approx. food served</div>
+    </div>
+    <div class="warden-stat-card">
+      <div class="warden-stat-value">${mealsSeen.size}</div>
+      <div class="warden-stat-label">meals logged</div>
+    </div>
+    <div class="warden-stat-card">
+      <div class="warden-stat-value">${Object.keys(pickCounts).length}</div>
+      <div class="warden-stat-label">distinct dishes picked</div>
+    </div>
+  `;
+
+  const ranked = Object.keys(pickCounts)
+    .map(id => ({ dish: findDish(id), count: pickCounts[id] }))
+    .filter(r => r.dish)
+    .sort((a, b) => b.count - a.count);
+
+  ranked.slice(0, 3).forEach((r, i) => {
+    const row = document.createElement("div");
+    row.className = "top3-row";
+    row.innerHTML = `<span class="top3-rank">#${i + 1}</span><span>${r.dish.name}</span><span>picked in ${r.count} meal${r.count > 1 ? "s" : ""}</span>`;
+    mostBox.appendChild(row);
+  });
+
+  // least picked — reverse of the same ranking, with a grounded swap suggestion
+  ranked.slice(-3).reverse().forEach((r, i) => {
+    const wrap = document.createElement("div");
+    const row = document.createElement("div");
+    row.className = "top3-row";
+    row.innerHTML = `<span class="top3-rank">#${i + 1}</span><span>${r.dish.name}</span><span>picked in ${r.count} meal${r.count > 1 ? "s" : ""}</span>`;
+    wrap.appendChild(row);
+
+    const swapText = DISH_SPECIFIC_SWAPS[r.dish.id] || LOCAL_SWAPS[r.dish.category] || "Consider rotating in a local, seasonal alternative.";
+    const note = document.createElement("div");
+    note.className = "warden-swap-note";
+    note.textContent = swapText + " (FSSAI Eat Right Campus / ICMR-NIN aligned)";
+    wrap.appendChild(note);
+
+    leastBox.appendChild(wrap);
+  });
+}
+
+// ---------------------------------------------------------------
 // WEEKLY DIGEST TAB
 // ---------------------------------------------------------------
 function renderDigest() {
@@ -864,6 +969,7 @@ const savedProfile = getProfile();
 document.getElementById("weight-input").value = savedProfile.weight;
 document.getElementById("gender-select").value = savedProfile.gender;
 
+setRole(getRole());
 renderLogTab();
 document.getElementById("weight-input").addEventListener("change", () => { renderDigest(); renderCatchupPanel(); });
 document.getElementById("gender-select").addEventListener("change", () => { renderDigest(); renderCatchupPanel(); });

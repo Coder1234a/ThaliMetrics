@@ -6,6 +6,20 @@ Format: `Date — Decision — Why — Who`
 
 ---
 
+**2026-09-04** — Menu editing moved entirely out of the student-facing Log Meal page into a new role-gated Admin Panel tab. — Directly requested: "only mess admins can edit menus and not students." The role switcher is client-side only (no real auth) since this is a demo, not a production access-control system — noted honestly rather than implied otherwise. — v5 rebuild
+
+**2026-09-04** — "Popularity" for Warden Insights is measured as number of separate logged meals a dish appeared in, not total volume taken. — Volume conflates a dish being popular with just being served in large default portions. Meal-count is a cleaner read of "how often did students actually choose this." — v5 rebuild
+
+**2026-09-04** — Least-picked swap suggestions check a dish-specific mapping first, falling back to the category-level one only if no specific entry exists. — Category-level advice ("try a local gravy") is vague when we already know the exact dish; dish-specific suggestions (e.g. upma → add vegetables for fiber/vitamin A) give a warden something immediately actionable. — v5 rebuild
+
+**2026-09-04** — Roti control changed from a photo to a plain white circle. — Directly requested. Also incidentally reduces one image load. — v5 rebuild
+
+**2026-09-04** — Reduced backdrop-filter blur from 14–16px to 7–10px and raised glass-card opacity from 0.55 to 0.82 sitewide. — Directly requested ("better UI... better for the eyes"), and blur was flagged earlier as a likely performance cost on the exact phones students would use at the tray return. Higher opacity also meaningfully improves text contrast against the card background. — v5 rebuild
+
+**2026-09-04** — Found and fixed a CSS specificity bug while doing visual QA: `.admin-only-nav { display: none }` was being silently overridden by `.bottom-nav-btn { display: flex }` (equal specificity, later in the file), so the Admin icon showed in the bottom nav for students despite passing every DOM-based automated test. — jsdom checks class presence, not computed CSS cascade, so this class of bug is invisible to automated tests and only shows up in an actual rendered screenshot. Reinforces why the visual QA step stays mandatory, not optional, even when all automated tests pass. — v5 rebuild
+
+---
+
 **2026-09-04** — Fixed the waste-slider bug by making the vessel/roti controls' own `max` shrink dynamically to match remaining room, not just clamping the saved value after the fact. — The reported symptom (waste slider reaching "full" after only 3/4 was taken) was a real bug: the partial control's range max was hardcoded to 1 regardless of how much was actually taken. Clamping only the saved number left the slider itself still draggable past what was possible. — v4 rebuild
 
 **2026-09-04** — Used the user's own AI-generated roti photo and provided logo instead of a web-scraped image. — The team supplied their own generated/owned assets, which resolves the copyright concern that ruled out real photos in earlier versions — this is now a real photo, not a CSS illustration. — v4 rebuild

@@ -16,8 +16,16 @@
       <p class="subtitle">Eat better. Waste less.</p>
     </div>
   </div>
+
+  <div class="role-switcher">
+    <span class="role-label">Viewing as:</span>
+    <button class="role-btn active" data-role="student">🎓 Student</button>
+    <button class="role-btn" data-role="admin">🧑‍🍳 Mess Admin / Warden</button>
+  </div>
+
   <nav class="tabs">
     <button class="tab-btn active" data-tab="log">Log My Meal</button>
+    <button class="tab-btn admin-only-nav" data-tab="admin">Admin Panel</button>
     <button class="tab-btn" data-tab="dashboard">Mess Dashboard</button>
     <button class="tab-btn" data-tab="digest">Weekly Digest</button>
   </nav>
@@ -45,14 +53,7 @@
       </div>
     </div>
 
-    <button id="menu-admin-toggle-btn" class="menu-admin-toggle">⚙ Edit today's menu for this meal</button>
-    <div id="menu-admin-panel" class="menu-admin-panel">
-      <div class="admin-add-row">
-        <select id="admin-dish-select"><!-- filled by app.js --></select>
-        <button id="admin-add-btn" class="add-serving-btn">Add to menu</button>
-      </div>
-      <div id="admin-menu-list" class="admin-menu-list"><!-- filled by app.js --></div>
-    </div>
+    <p class="admin-set-note">Today's menu is set by the mess admin. If something's missing, let them know.</p>
 
     <div id="catchup-panel"><!-- filled by app.js --></div>
 
@@ -71,6 +72,51 @@
     </div>
 
     <div id="current-meal-summary" class="meal-summary"><!-- filled by app.js --></div>
+  </section>
+
+  <!-- ===================== MESS ADMIN: MENU + WARDEN INSIGHTS ===================== -->
+  <section id="tab-admin" class="tab-panel">
+    <h2>Admin Panel</h2>
+    <p class="hint">Visible to mess admins / wardens only. Students can pick from this menu but cannot edit it.</p>
+
+    <h3>Today's Menu</h3>
+    <div class="admin-add-row">
+      <label class="admin-slot-label">Editing menu for:
+        <select id="admin-meal-slot-select">
+          <option value="breakfast">Breakfast</option>
+          <option value="lunch" selected>Lunch</option>
+          <option value="snacks">Snacks</option>
+          <option value="dinner">Dinner</option>
+        </select>
+      </label>
+    </div>
+    <div class="admin-add-row">
+      <select id="admin-dish-select"><!-- filled by app.js --></select>
+      <button id="admin-add-btn" class="add-serving-btn">Add to menu</button>
+    </div>
+    <div id="admin-menu-list" class="admin-menu-list"><!-- filled by app.js --></div>
+
+    <h3 style="margin-top:28px;">Warden Insights</h3>
+    <p class="hint">How much food is actually being used, what students pick most, and where a local/seasonal swap could help.</p>
+
+    <div class="range-toggle" id="warden-range-toggle">
+      <button class="range-btn active" data-wrange="day">Today</button>
+      <button class="range-btn" data-wrange="week">This Week</button>
+      <button class="range-btn" data-wrange="month">This Month</button>
+    </div>
+
+    <div id="warden-summary" class="warden-summary"><!-- filled by app.js --></div>
+
+    <div class="warden-cols">
+      <div class="warden-col">
+        <h4>Most picked</h4>
+        <div id="warden-most-picked"><!-- filled by app.js --></div>
+      </div>
+      <div class="warden-col">
+        <h4>Least picked — swap candidates</h4>
+        <div id="warden-least-picked"><!-- filled by app.js --></div>
+      </div>
+    </div>
   </section>
 
   <!-- ===================== MESS: DASHBOARD ===================== -->
@@ -121,6 +167,7 @@
 
 <nav class="bottom-nav">
   <button class="bottom-nav-btn active" data-tab="log"><span class="icon">🍽️</span>Meal</button>
+  <button class="bottom-nav-btn admin-only-nav" data-tab="admin"><span class="icon">🧑‍🍳</span>Admin</button>
   <button class="bottom-nav-btn" data-tab="dashboard"><span class="icon">📊</span>Mess</button>
   <button class="bottom-nav-btn" data-tab="digest"><span class="icon">🥗</span>Nutrition</button>
 </nav>
